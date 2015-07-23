@@ -1,0 +1,31 @@
+程序运行顺序:
+Step 1:
+	运行命令:  python houseParser.py 
+	程序输出文件: houseInfo_origin.xls
+	说明:    从百度乐居页面(http://esf.baidu.com/bj/house/a100-m6-k5-n1)爬取学区房基本信息
+or 
+	运行命令:  python houseParserHM.py 
+	程序输出文件: houseInfo_homelink_origin.xls
+	说明:    从链家页面(http://bj.lianjia.com/ershoufang/pg1sc1)爬取学区房基本信息
+
+Step 2:
+	运行命令:  python addressShift.py
+	程序输入文件:  houseInfo_origin.xls
+	程序输出文件:  houseInfo_address.xls
+	说明: 将学区房的地址转换成百度地图使用的坐标
+
+Step 3:
+	运行命令: python baiduToGoogle.py
+	程序输入文件:  houseInfo_address.xls
+	程序输出文件:  houseInfo_google.xls
+结果:  houseInfo_google.xls 为包含完整信息的结果文件
+
+运行程序依赖的环境:
+1. Python 
+2. BeautifulSoup 用途:主要用于解析HTML网页
+3. xlrd          用途:用于读取Excel文件
+4. xlwt          用途:用于写入Excel文件
+
+
+配置文件的修改:
+需要修改的参数: TotalPage(需要爬取的总计的页数)

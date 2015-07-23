@@ -7,7 +7,7 @@ RootUrl = "http://esf.baidu.com/bj/house/a100-m6-k5-n"
 PrefixURL = "http://esf.baidu.com/bj/detail/"
 
 #总计页数
-TotalPage = 4460
+TotalPage = 5
 
 #百度地址转换的url
 GeoCoding = "http://api.map.baidu.com/geocoder/v2/?output=json&ak=m96zoqEc8tqcWhg3ZkHxqKm5&address="
@@ -24,6 +24,9 @@ RetryCount = 5
 
 #设置获取每页信息休眠时间
 PagePerTime = 1
+
+#链家每页暂停时间
+HM_PagePerTime =  3
 
 #地址转换成坐标时每次处理数据量
 PageNumber = 20

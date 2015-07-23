@@ -107,7 +107,8 @@ class HouseParser:
 			self.worksheet.write(actualIndex+1, 3, label = house.price)
 			self.worksheet.write(actualIndex+1, 4, label = house.flage)
 		self.excelIndex += len(self.houses)
-		self.book.save('houseInfo_origin_'+self.timestamp+'.xls')
+		#self.book.save('houseInfo_origin_'+self.timestamp+'.xls')
+		self.book.save('houseInfo_origin.xls')
 
 if __name__ == '__main__':
 	houseParser = HouseParser()

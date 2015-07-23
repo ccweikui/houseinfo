@@ -141,7 +141,8 @@ class AddressShift:
 			self.worksheet.write(actualIndex+1, 3, label = house.price)
 			self.worksheet.write(actualIndex+1, 4, label = house.longitude)
 			self.worksheet.write(actualIndex+1, 5, label = house.latitude)
-		self.book.save('houseInfo_address' + self.timestamp + '.xls')
+		#self.book.save('houseInfo_address_' + self.timestamp + '.xls')
+		self.book.save('houseInfo_address.xls')
 
 if __name__ == '__main__':
 	addressShift = AddressShift()

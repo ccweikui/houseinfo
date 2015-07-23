@@ -19,8 +19,12 @@ class HouseParser:
 	def __init__(self):
 		#请求的URL地址
 		#self.rootUrl = "http://beijing.homelink.com.cn/school/pg"
-		self.rootUrl = "http://bj.lianjia.com/school/pg"
-		self.prefixUrl = "http://beijing.homelink.com.cn/ershoufang/"
+		#self.rootUrl = "http://bj.lianjia.com/school/pg"
+		self.rootUrl = "http://bj.lianjia.com/ershoufang/pg"
+		self.suffixUrl = "sc1"
+		#self.prefixUrl = "http://beijing.homelink.com.cn/ershoufang/"
+		self.prefixUrl = "http://bj.lianjia.com"
+		self.prefixText = "/ershoufang/"
 		self.totalPage = 1740
 		#正确处理的houseId的列表
 		self.success_houseIds = {}
@@ -38,7 +42,7 @@ class HouseParser:
 		"""
 		获取所有的学期房列表
 		"""
-		request = urllib2.Request(self.rootUrl+str(pageCount))
+		request = urllib2.Request(self.rootUrl+str(pageCount)+self.suffixUrl)
 		content = urllib2.urlopen(request).read()
 		originContent = content
 		
@@ -46,8 +50,7 @@ class HouseParser:
 		soup = BeautifulSoup(originContent)
 		body = soup.body
 		
-		houseList = body.find('div',id='listData').find_all('div',attrs={"class": "public indetail"})
-
+		houseList = body.find_all('div',attrs={"class": "info-panel"})
 		for houseStr in houseList:
 			try:
 				self.processHouse(houseStr)
@@ -61,16 +64,15 @@ class HouseParser:
 		"""
 		对每个学区房记录进行处理
 		"""
-		houseInfo = houseStr.find('div',attrs={"class": "homeimg"}).find_all('a')
-		houseId = houseInfo[0]['href'][len(self.prefixUrl):][:-6]
-		addressUrl = (houseStr.find('div',attrs={"class": "content"}).find_all('a'))[0]['href']
-		address = self.processAddress(addressUrl) + (houseStr.find('div',attrs={"class": "content"}).find_all('a'))[0].text
-		price = (houseStr.find('div',attrs={"class": "price"}).find_all('p'))[0].text
-		area = (houseStr.find('div',attrs={"class": "content"}).find_all('span'))[2].text
+		houseInfo = houseStr.find_all('a')
+		houseId = houseInfo[0]['href'][len(self.prefixText):][:-5]
+		addressUrl = self.prefixUrl + houseInfo[1]['href']
+		address = self.processAddress(addressUrl)
+		price = (houseStr.find('div',attrs={"class": "price-pre"})).text
+		area = (houseStr.find('div',attrs={"class": "where"}).find_all('span'))[3].text
 		#如果houseId没被处理过
 		if not houseId in self.success_houseIds:
 			print houseId,address,price,area
-
 			house = House()
 			house.houseId = houseId
 			house.address = address
@@ -79,7 +81,6 @@ class HouseParser:
 			house.flage = 0
 			self.houses.append(house)
 			self.success_houseIds[houseId] = house
-
 		else:
 			print "id:%s  exist" % houseId
 			print houseId,address,price,area
@@ -100,12 +101,11 @@ class HouseParser:
 		#寻找content中所有的列信息
 		soup = BeautifulSoup(originContent)
 		body = soup.body
-		addressInfo = body.find('div',attrs={"class": "public xtitle"}).find_all('a')
-		district = addressInfo[1].text
-		ad = addressInfo[0].text
-
-		print district, ad
-		return u'北京市' +  district + ad
+		addressInfo = body.find('div',attrs={"class": "title fl"}).find_all('span')
+		#district = addressInfo[0].text
+		ad = addressInfo[0].text[1:][:-1]
+		xiaoqu = addressInfo[1].text
+		return u'北京市' + ad + xiaoqu
 
 	def writeExcelHead(self):
 		"""
@@ -129,11 +129,12 @@ class HouseParser:
 			self.worksheet.write(actualIndex+1, 3, label = house.price)
 			self.worksheet.write(actualIndex+1, 4, label = house.flage)
 		self.excelIndex += len(self.houses)
-		self.book.save('houseInfo_homelink_origin_'+self.timestamp+'.xls')
+		#self.book.save('houseInfo_homelink_origin_'+self.timestamp+'.xls')
+		self.book.save('houseInfo_homelink_origin.xls')
 
 if __name__ == '__main__':
 	houseParser = HouseParser()
 	for pageCount in range(houseParser.totalPage):
-		print "第%d页\n" % (pageCount + 1)
+		print "第%d页" % (pageCount + 1)
 		houseParser.getHouseList(pageCount+1)
-		time.sleep(PagePerTime)
+		time.sleep(HM_PagePerTime)
